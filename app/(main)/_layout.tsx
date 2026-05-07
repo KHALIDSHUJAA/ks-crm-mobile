@@ -12,6 +12,7 @@ export default function MainLayout() {
         tabBarActiveTintColor: COLORS.gold,
         tabBarInactiveTintColor: COLORS.textMuted,
       }}
+      sceneContainerStyle={{ backgroundColor: '#000' }}
     >
       <Tabs.Screen
         name="settings"

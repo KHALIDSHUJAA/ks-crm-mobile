@@ -245,8 +245,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     // Floating style
-    marginBottom: 20,
-    marginHorizontal: 16,
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
+    marginBottom: 0, // Replaced by bottom
+    marginHorizontal: 0, // Replaced by left/right
     borderRadius: 25,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.05)',
