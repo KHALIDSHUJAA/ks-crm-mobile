@@ -54,7 +54,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     r => descriptors[r.key].options.href !== null
   )
 
-  const tabBarHeight = 60 + insets.bottom
+  const tabBarHeight = 65 // Fixed height for floating bar
 
   const getTabIcon = (name: string, isFocused: boolean) => {
     const size = 26
@@ -111,7 +111,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
       <Animated.View
         style={[
           styles.fabActions,
-          { bottom: tabBarHeight + 12 },
+          { bottom: tabBarHeight + 35 }, // Higher to clear the floating bar
           {
             opacity: scaleAnim,
             transform: [{ scale: scaleAnim }, {
@@ -146,7 +146,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
       </Animated.View>
 
       {/* Tab Bar */}
-      <View style={[styles.tabBar, { height: tabBarHeight, paddingBottom: insets.bottom }]}>
+      <View style={[styles.tabBar, { height: tabBarHeight }]}>
 
         {/* Left side tabs */}
         {leftSideTabs.map((route) => {
@@ -244,6 +244,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+    // Floating style
+    marginBottom: 20,
+    marginHorizontal: 16,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   tab: {
     flex: 1,
