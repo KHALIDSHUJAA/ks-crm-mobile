@@ -58,20 +58,26 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
   const getTabIcon = (name: string, isFocused: boolean) => {
     const size = 26
+    const isWeb = Platform.OS === 'web'
+
     if (name === 'search') {
-      const color = isFocused ? '#00d4ff' : COLORS.textMuted
+      const color = isFocused ? COLORS.gold : COLORS.textMuted
+      if (isWeb) return <Text style={{ fontSize: 24 }}>👥</Text>
       return <Ionicons name={isFocused ? "people" : "people-outline"} size={size} color={color} />
     }
     if (name === 'profile') {
-      const color = isFocused ? '#b829ea' : COLORS.textMuted
+      const color = isFocused ? COLORS.gold : COLORS.textMuted
+      if (isWeb) return <Text style={{ fontSize: 24 }}>👤</Text>
       return <Ionicons name={isFocused ? "person-circle" : "person-circle-outline"} size={size + 2} color={color} />
     }
     if (name === 'index') {
       const color = isFocused ? COLORS.gold : COLORS.textMuted
+      if (isWeb) return <Text style={{ fontSize: 24 }}>🏠</Text>
       return <Ionicons name={isFocused ? "home" : "home-outline"} size={size} color={color} />
     }
     if (name === 'settings') {
-      const color = isFocused ? '#adb5bd' : COLORS.textMuted
+      const color = isFocused ? COLORS.gold : COLORS.textMuted
+      if (isWeb) return <Text style={{ fontSize: 24 }}>⚙️</Text>
       return <Ionicons name={isFocused ? "settings" : "settings-outline"} size={size} color={color} />
     }
     return <Ionicons name="list" size={size} color={COLORS.textMuted} />
@@ -79,10 +85,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
   const getTabColor = (name: string, isFocused: boolean) => {
     if (!isFocused) return COLORS.textMuted
-    if (name === 'search') return '#00d4ff' // Cyan for customers
-    if (name === 'profile') return '#b829ea' // Purple for profile
-    if (name === 'settings') return '#e2e8f0' // Silver for settings
-    return COLORS.gold // Gold for Home
+    return COLORS.gold
   }
 
   // Remove any unwanted hidden routes from visibleRoutes
