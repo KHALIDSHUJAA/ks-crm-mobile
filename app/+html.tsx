@@ -14,6 +14,15 @@ export default function HTML({ children }: PropsWithChildren) {
         <ScrollViewStyleReset />
 
         <link rel="manifest" href="/manifest.json" />
+        <style id="expo-vector-icons">{`
+          @font-face {
+            font-family: 'Ionicons';
+            src: url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
+          }
+          .icon-icon {
+            font-family: 'Ionicons';
+          }
+        `}</style>
       </head>
       <body>{children}</body>
     </html>
