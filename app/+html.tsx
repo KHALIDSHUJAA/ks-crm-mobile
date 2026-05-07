@@ -11,13 +11,14 @@ export default function HTML({ children }: PropsWithChildren) {
         <meta name="description" content="نظام إدارة العملاء" />
         <meta name="theme-color" content="#0a0a0a" />
 
+        <link rel="apple-touch-icon" href="/icon.png" />
         <ScrollViewStyleReset />
 
         <link rel="manifest" href="/manifest.json" />
         <style id="expo-vector-icons">{`
           @font-face {
             font-family: 'Ionicons';
-            src: url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@14.0.0/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
+            src: url('/fonts/Ionicons.ttf') format('truetype');
           }
           .icon-icon {
             font-family: 'Ionicons';
