@@ -1,5 +1,14 @@
 import { Stack } from 'expo-router'
 import { I18nManager, Platform } from 'react-native'
+import { useFonts } from 'expo-font'
+import { useEffect } from 'react'
+import * as SplashScreen from 'expo-splash-screen'
+import { Ionicons } from '@expo/vector-icons'
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+if (Platform.OS !== 'web') {
+  SplashScreen.preventAutoHideAsync()
+}
 
 I18nManager.allowRTL(true)
 I18nManager.forceRTL(true)
@@ -17,6 +26,22 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
 }
 
 export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    ...Ionicons.font,
+  })
+
+  useEffect(() => {
+    if (loaded || error) {
+      if (Platform.OS !== 'web') {
+        SplashScreen.hideAsync()
+      }
+    }
+  }, [loaded, error])
+
+  if (!loaded && !error) {
+    return null
+  }
+
   return (
     <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
       <Stack.Screen name="index" />
