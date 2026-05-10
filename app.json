@@ -59,12 +59,6 @@
     "experiments": {
       "typedRoutes": true
     },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "79d87d31-fc1a-414c-aa2b-b13ef9df913b"
-      }
-    },
     "owner": "khalidshujaa"
   }
 }
