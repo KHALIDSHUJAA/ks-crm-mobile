@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: COLORS.textPrimary,
     fontWeight: '600',
+    writingDirection: 'ltr',
+    textAlign: 'center',
   },
   deleteKey: {
     width: 80,
