@@ -18,7 +18,11 @@
         "backgroundColor": "#0a0a0a"
       },
       "package": "com.kscrm.mobile",
-      "allowBackup": false
+      "allowBackup": false,
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "ios": {
       "bundleIdentifier": "com.kscrm.mobile",
@@ -46,8 +50,21 @@
       ]
     ],
     "scheme": "ks-crm",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "79d87d31-fc1a-414c-aa2b-b13ef9df913b"
+      }
+    },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "79d87d31-fc1a-414c-aa2b-b13ef9df913b"
+      }
+    },
+    "owner": "khalidshujaa"
   }
 }

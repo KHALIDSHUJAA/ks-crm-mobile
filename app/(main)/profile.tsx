@@ -3,11 +3,14 @@ import { View, Text, StyleSheet, StatusBar, ScrollView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../../constants/colors'
 import { supabase } from '../../lib/supabase'
+import { registerForPushNotificationsAsync, savePushToken, sendPushNotification } from '../../lib/notifications'
+import { Alert, TouchableOpacity } from 'react-native'
 
 export default function ProfileScreen() {
   const [email, setEmail] = useState('')
   const [userId, setUserId] = useState('')
   const [createdAt, setCreatedAt] = useState('')
+  const [role, setRole] = useState('employee')
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -17,10 +20,41 @@ export default function ProfileScreen() {
         setUserId(user.id.slice(0, 8).toUpperCase())
         const date = new Date(user.created_at)
         setCreatedAt(date.toLocaleDateString('ar-IQ', { year: 'numeric', month: 'long', day: 'numeric' }))
+        
+        // Get role from metadata
+        const userRole = user.user_metadata?.role || user.raw_user_meta_data?.role || 'employee'
+        setRole(userRole)
       }
     }
     fetchUser()
   }, [])
+
+  const handleManualRegister = async () => {
+    try {
+      const token = await registerForPushNotificationsAsync()
+      if (!token) {
+        Alert.alert('فشل', 'تعذر الحصول على رمز الإشعارات. تأكد من إعطاء الإذن في إعدادات الهاتف.')
+        return
+      }
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await savePushToken(user.id, token)
+        Alert.alert('نجاح ✅', 'تم تسجيل هاتفك لاستقبال الإشعارات بنجاح!')
+      }
+    } catch (err: any) {
+      Alert.alert('خطأ', err.message)
+    }
+  }
+
+  const handleTestNotification = async () => {
+    try {
+      Alert.alert('جاري الإرسال...', 'يتم الآن محاولة إرسال إشعار تجريبي لكافة الأجهزة المسجلة...')
+      await sendPushNotification('🔵 إشعار تجريبي', 'هذا الإشعار للتأكد من عمل النظام بشكل صحيح ✅')
+    } catch (err: any) {
+      Alert.alert('فشل الإرسال', err.message)
+    }
+  }
 
   const initials = email ? email.slice(0, 2).toUpperCase() : 'KS'
 
@@ -39,7 +73,7 @@ export default function ProfileScreen() {
           <View style={styles.avatarCircle}>
             <Text style={styles.avatarText}>{initials}</Text>
           </View>
-          <Text style={styles.name}>موظف KS CRM</Text>
+          <Text style={styles.name}>{role === 'admin' ? 'صاحب المحل' : 'موظف KS CRM'}</Text>
           <Text style={styles.email}>{email}</Text>
           <View style={styles.idBadge}>
             <Text style={styles.idText}>ID: #{userId}</Text>
@@ -59,6 +93,17 @@ export default function ProfileScreen() {
             <Text style={styles.statLabel}>تاريخ الانضمام</Text>
           </View>
         </View>
+
+        {/* Notification Test */}
+        <TouchableOpacity style={styles.registerBtn} onPress={handleManualRegister}>
+          <Ionicons name="notifications-outline" size={20} color="#fff" />
+          <Text style={styles.registerBtnText}>تفعيل الإشعارات على هذا الجهاز</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.registerBtn, { backgroundColor: '#3498db' }]} onPress={handleTestNotification}>
+          <Ionicons name="paper-plane-outline" size={20} color="#fff" />
+          <Text style={styles.registerBtnText}>إرسال إشعار تجريبي لنفسي</Text>
+        </TouchableOpacity>
 
         {/* Info Note */}
         <View style={styles.noteCard}>
@@ -131,4 +176,10 @@ const styles = StyleSheet.create({
   versionRow: { alignItems: 'center', gap: 4, paddingTop: 10 },
   versionText: { color: COLORS.textMuted, fontSize: 12 },
   devText: { color: COLORS.textMuted, fontSize: 11, opacity: 0.6 },
+
+  registerBtn: {
+    backgroundColor: '#2ecc71', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, padding: 16, borderRadius: 12, marginBottom: 10
+  },
+  registerBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 }
 })

@@ -8,11 +8,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../constants/colors'
+import QuickLogModal from './QuickLogModal'
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [fabOpen, setFabOpen] = useState(false)
   const scaleAnim = useRef(new Animated.Value(0)).current
   const insets = useSafeAreaInsets()
+
+  // Modal State
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalType, setModalType] = useState<'debt' | 'payment'>('debt')
 
   const toggleFab = () => {
     if (fabOpen) {
@@ -45,8 +50,13 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
   const handleQuickAction = (type: 'debt' | 'payment') => {
     closeFab()
-    // Navigate to search with quick action mode
-    router.push({ pathname: '/(main)/search', params: { quickType: type } })
+    setModalType(type)
+    setModalVisible(true)
+  }
+
+  const handleModalSuccess = () => {
+    setModalVisible(false)
+    router.replace('/(main)?success=true')
   }
 
   // Visible tabs only (exclude log-event)
@@ -222,6 +232,14 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
           )
         })}
       </View>
+
+      {/* Quick Action Modal */}
+      <QuickLogModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        presetType={modalType}
+        onSuccess={handleModalSuccess}
+      />
     </>
   )
 }

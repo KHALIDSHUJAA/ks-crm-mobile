@@ -1,9 +1,25 @@
 import { Tabs } from 'expo-router'
+import { useEffect } from 'react'
 import { COLORS } from '../../constants/colors'
 import { STRINGS } from '../../constants/strings'
 import CustomTabBar from '../../components/CustomTabBar'
+import { registerForPushNotificationsAsync, savePushToken } from '../../lib/notifications'
+import { supabase } from '../../lib/supabase'
 
 export default function MainLayout() {
+  useEffect(() => {
+    const setupNotifications = async () => {
+      const token = await registerForPushNotificationsAsync()
+      if (token) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          await savePushToken(user.id, token)
+        }
+      }
+    }
+    setupNotifications()
+  }, [])
+
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}

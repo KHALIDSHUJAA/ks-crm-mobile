@@ -10,6 +10,7 @@ import { COLORS } from '../../constants/colors'
 import { STRINGS } from '../../constants/strings'
 import CustomerCard from '../../components/CustomerCard'
 import LoadingSpinner from '../../components/LoadingSpinner'
+import QuickLogModal from '../../components/QuickLogModal'
 import { logout } from '../../lib/auth'
 
 export default function SearchScreen() {
@@ -22,6 +23,10 @@ export default function SearchScreen() {
   const [isFocused, setIsFocused] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputRef = useRef<TextInput>(null)
+
+  // Modal State
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
   const loadTopCustomers = async () => {
     setLoading(true)
@@ -82,18 +87,15 @@ export default function SearchScreen() {
 
   // Removed handleLogout as it's now in the dashboard
 
-  // When quickType is active, tapping a customer goes straight to log-event with preset type
+  // When quickType is active, tapping a customer opens the floating modal
   const handleQuickSelect = (customer: Customer) => {
-    router.push({
-      pathname: '/(main)/log-event',
-      params: {
-        customerId: customer.id,
-        customerName: customer.name,
-        balanceIqd: customer.balance_iqd,
-        balanceUsd: customer.balance_usd,
-        presetType: quickType,
-      },
-    })
+    setSelectedCustomer(customer)
+    setModalVisible(true)
+  }
+
+  const handleModalSuccess = () => {
+    setModalVisible(false)
+    router.replace('/(main)?success=true')
   }
 
   return (
@@ -163,6 +165,17 @@ export default function SearchScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+        />
+      )}
+
+      {/* Quick Action Modal */}
+      {selectedCustomer && (
+        <QuickLogModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          customer={selectedCustomer}
+          presetType={quickType || 'debt'}
+          onSuccess={handleModalSuccess}
         />
       )}
     </View>
