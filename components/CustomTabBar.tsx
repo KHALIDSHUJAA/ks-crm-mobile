@@ -9,6 +9,7 @@ import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../constants/colors'
 import QuickLogModal from './QuickLogModal'
+import NewCustomerModal from './NewCustomerModal'
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [fabOpen, setFabOpen] = useState(false)
@@ -18,6 +19,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
   // Modal State
   const [modalVisible, setModalVisible] = useState(false)
   const [modalType, setModalType] = useState<'debt' | 'payment'>('debt')
+  const [newCustomerModalVisible, setNewCustomerModalVisible] = useState(false)
 
   const toggleFab = () => {
     if (fabOpen) {
@@ -56,6 +58,11 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
   const handleModalSuccess = () => {
     setModalVisible(false)
+    router.replace('/(main)?success=true')
+  }
+
+  const handleNewCustomerSuccess = () => {
+    setNewCustomerModalVisible(false)
     router.replace('/(main)?success=true')
   }
 
@@ -134,7 +141,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
         ]}
         pointerEvents={fabOpen ? 'auto' : 'none'}
       >
-        {/* Debt Button — Red (Right in RTL) */}
+        {/* Debt Button — Red */}
         <TouchableOpacity
           style={[styles.actionBtn, styles.debtBtn]}
           onPress={() => handleQuickAction('debt')}
@@ -144,7 +151,17 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
           <Text style={styles.actionLabel}>دين</Text>
         </TouchableOpacity>
 
-        {/* Payment Button — Green (Left in RTL) */}
+        {/* New Customer Button — Gold (Center) */}
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.newCustomerBtn]}
+          onPress={() => { closeFab(); setNewCustomerModalVisible(true) }}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.actionIcon}>🆕</Text>
+          <Text style={styles.actionLabel}>عميل جديد</Text>
+        </TouchableOpacity>
+
+        {/* Payment Button — Green */}
         <TouchableOpacity
           style={[styles.actionBtn, styles.paymentBtn]}
           onPress={() => handleQuickAction('payment')}
@@ -239,6 +256,13 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
         onClose={() => setModalVisible(false)}
         presetType={modalType}
         onSuccess={handleModalSuccess}
+      />
+
+      {/* New Customer Modal */}
+      <NewCustomerModal
+        visible={newCustomerModalVisible}
+        onClose={() => setNewCustomerModalVisible(false)}
+        onSuccess={handleNewCustomerSuccess}
       />
     </>
   )
@@ -360,6 +384,12 @@ const styles = StyleSheet.create({
     shadowColor: '#2ecc71',
     borderWidth: 1.5,
     borderColor: 'rgba(46,204,113,0.6)',
+  },
+  newCustomerBtn: {
+    backgroundColor: '#8a6e1a',
+    shadowColor: COLORS.gold,
+    borderWidth: 1.5,
+    borderColor: 'rgba(201,162,39,0.6)',
   },
   actionIcon: {
     fontSize: 26,

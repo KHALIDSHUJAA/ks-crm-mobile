@@ -14,7 +14,7 @@ export interface PhoneEvent {
   id: string
   customer_id: number
   customer_name: string
-  type: 'debt' | 'payment'
+  type: 'debt' | 'payment' | 'new_customer'
   amount: number
   currency: 'IQD' | 'USD'
   note: string | null
@@ -24,4 +24,4 @@ export interface PhoneEvent {
 }
 
 export type Currency = 'IQD' | 'USD'
-export type EventType = 'debt' | 'payment'
+export type EventType = 'debt' | 'payment' | 'new_customer'
