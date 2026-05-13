@@ -19,16 +19,18 @@ function formatAmount(amount: number, currency: string): string {
   return currency === 'USD' ? `$${num}` : `${num} د.ع`
 }
 
-function getBadgeStyle(type: PhoneEvent['type']) {
+function getBadgeStyle(type: PhoneEvent['type'], isNewCustomer: boolean) {
+  if (isNewCustomer) return { badge: styles.newCustomerBadge, text: styles.newCustomerText, label: '🆕 عميل جديد' }
   if (type === 'debt') return { badge: styles.debtBadge, text: styles.debtText, label: STRINGS.debtType }
   if (type === 'payment') return { badge: styles.paymentBadge, text: styles.paymentText, label: STRINGS.paymentType }
-  return { badge: styles.newCustomerBadge, text: styles.newCustomerText, label: '🆕 عميل جديد' }
+  return { badge: styles.debtBadge, text: styles.debtText, label: STRINGS.debtType }
 }
 
-function getAmountStyle(type: PhoneEvent['type']) {
+function getAmountStyle(type: PhoneEvent['type'], isNewCustomer: boolean) {
+  if (isNewCustomer) return styles.newCustomerAmount
   if (type === 'debt') return styles.debtAmount
   if (type === 'payment') return styles.paymentAmount
-  return styles.newCustomerAmount
+  return styles.debtAmount
 }
 
 export default function EventList({ events }: EventListProps) {
@@ -44,8 +46,25 @@ export default function EventList({ events }: EventListProps) {
   return (
     <View style={styles.container}>
       {events.map((event) => {
-        const badge = getBadgeStyle(event.type)
-        const isNewCustomer = event.type === 'new_customer'
+        let parsedNote: any = null
+        let isNewCustomer = event.type === 'new_customer' // Backward compatibility
+
+        if (event.note) {
+          try {
+            parsedNote = JSON.parse(event.note)
+            if (parsedNote.isNewCustomer) isNewCustomer = true
+          } catch (e) { }
+        }
+
+        const badge = getBadgeStyle(event.type, isNewCustomer)
+
+        let displayNote = event.note
+        if (isNewCustomer && parsedNote) {
+          displayNote = ''
+          if (parsedNote.customerNote) displayNote += `ملاحظة: ${parsedNote.customerNote}\n`
+          if (parsedNote.debtNote) displayNote += `الدين: ${parsedNote.debtNote}`
+        }
+
         return (
           <View key={event.id} style={[styles.item, isNewCustomer && styles.newCustomerItem]}>
             <View style={styles.header}>
@@ -58,12 +77,12 @@ export default function EventList({ events }: EventListProps) {
             {isNewCustomer ? (
               <Text style={styles.newCustomerHint}>⏳ بانتظار الإضافة من الإدارة</Text>
             ) : (
-              <Text style={[styles.amount, getAmountStyle(event.type)]}>
+              <Text style={[styles.amount, getAmountStyle(event.type, isNewCustomer)]}>
                 {event.amount > 0 ? formatAmount(event.amount, event.currency) : '---'}
               </Text>
             )}
-            {event.note && !isNewCustomer ? (
-              <Text style={styles.note}>{event.note}</Text>
+            {displayNote ? (
+              <Text style={styles.note}>{displayNote}</Text>
             ) : null}
           </View>
         )

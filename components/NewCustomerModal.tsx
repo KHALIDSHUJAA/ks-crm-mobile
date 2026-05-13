@@ -56,10 +56,11 @@ export default function NewCustomerModal({ visible, onClose, onSuccess }: NewCus
       const { error } = await supabase.from('phone_events').insert({
         customer_id: 0, // placeholder for new customers
         customer_name: customerName.trim(),
-        type: 'new_customer',
+        type: 'debt',
         amount: numAmount || 0,
         currency: 'IQD',
         note: JSON.stringify({
+          isNewCustomer: true,
           customerNote: customerNote.trim() || null,
           debtNote: debtNote.trim() || null,
         }),
