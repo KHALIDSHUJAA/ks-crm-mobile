@@ -8,6 +8,7 @@ import { Alert, TouchableOpacity } from 'react-native'
 
 export default function ProfileScreen() {
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [userId, setUserId] = useState('')
   const [createdAt, setCreatedAt] = useState('')
   const [role, setRole] = useState('employee')
@@ -21,9 +22,11 @@ export default function ProfileScreen() {
         const date = new Date(user.created_at)
         setCreatedAt(date.toLocaleDateString('ar-IQ', { year: 'numeric', month: 'long', day: 'numeric' }))
         
-        // Get role from metadata
+        // Get role and name from metadata
         const userRole = user.user_metadata?.role || user.raw_user_meta_data?.role || 'employee'
         setRole(userRole)
+        const fullName = user.user_metadata?.full_name || user.raw_user_meta_data?.full_name || ''
+        setName(fullName)
       }
     }
     fetchUser()
@@ -73,7 +76,7 @@ export default function ProfileScreen() {
           <View style={styles.avatarCircle}>
             <Text style={styles.avatarText}>{initials}</Text>
           </View>
-          <Text style={styles.name}>{role === 'admin' ? 'صاحب المحل' : 'موظف KS CRM'}</Text>
+          <Text style={styles.name}>{name || (role === 'admin' ? 'صاحب المحل' : 'موظف KS CRM')}</Text>
           <Text style={styles.email}>{email}</Text>
           <View style={styles.idBadge}>
             <Text style={styles.idText}>ID: #{userId}</Text>
